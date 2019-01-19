@@ -1,6 +1,6 @@
 **Running with Docker-Compose**
 
-- In the root directory of the project run "**docker-compose up**" command.
+- In the root directory of the project run "**docker-compose run composer**" command then "**docker-compose up**"
 - Wait all containers to start.
 - Browse React UI -> http://localhost:5001/
 
@@ -8,8 +8,7 @@
 All volumes (redis, rabbitmq, mssql) are commented out in docker-compose.yml. 
 
 **Todo**
-- React hot-loading for development environment
-- Keep waiting api service untill rabbitmq and mssql completely start, by using custom shell script. 
+- Run 2 docker-compose.yml for "**docker-compose up**" command
 
 ## Sample Screencast
 
