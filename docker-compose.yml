@@ -1,24 +1,25 @@
 version: '3.7'
 
 services:
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
       - "15672:15672"
       - "5672:5672"
-    # volumes:
-    #   - ./rabbitmq_volume:/var/lib/rabbitmq/mnesia
+    volumes:
+      - ./rabbitmq_volume:/var/lib/rabbitmq/mnesia
 
   redis:
     image: redis
     container_name: redis
     command: redis-server --appendonly yes
     ports:
-      - "6379:6379"  
-    # volumes:
-    #   - ./redis_volume:/data
-  
+      - "6379:6379"
+    volumes:
+      - ./redis_volume:/data
+
   mssql:
     image: mcr.microsoft.com/mssql/server
     container_name: mssql
@@ -27,8 +28,8 @@ services:
       - ACCEPT_EULA=Y
     ports:
       - "1433:1433"
-    # volumes:
-    #   - ./mssql_volume:/var/opt/mssql
+    volumes:
+      - ./mssql_volume:/var/opt/mssql
 
   api:
     build:
@@ -43,7 +44,7 @@ services:
       - rabbitmq
 
   ui:
-    build: 
+    build:
       context: ./react_ui
       dockerfile: Dockerfile
     container_name: workshop_ui
@@ -53,6 +54,23 @@ services:
       - NODE_ENV=development
     depends_on:
       - api
-    # volumes:        
-    #   - ./react_ui/src:/ui/src
-    #   - ./react_ui/public:/ui/public
+    volumes:
+      - ./react_ui/src:/ui/src
+      - ./react_ui/public:/ui/public
+
+  composer:
+    build:
+      context: ./composer
+      dockerfile: Dockerfile
+    container_name: wait_composer
+    depends_on:
+      - mssql
+      - rabbitmq
+    links:
+      - mssql
+      - rabbitmq
+    environment:
+      - TARGETS=rabbitmq:15672
+
+  
+    
